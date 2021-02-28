@@ -22,6 +22,9 @@ public class PostController {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    PostCacheService postCacheService;
+
     private static Integer PAGE_SIZE = 20;
 
     // 1. 글을 작성한다.
@@ -37,6 +40,9 @@ public class PostController {
     @GetMapping("/posts")
     public Page<Post> getPostList(@RequestParam(defaultValue = "1") Integer page) {
 
+        if (page.equals(1)) {
+            return postCacheService.getFirstPostPage();
+        }
         return postRepository.findAll(PageRequest.of(page - 1, PAGE_SIZE, Sort.by("id").descending()));
     }
 
